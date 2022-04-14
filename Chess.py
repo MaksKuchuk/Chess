@@ -4,9 +4,10 @@ from Piece import *
 
 
 class Board:
-	def __init__(self, screen, res, cell_colors, way_radius):
+	def __init__(self, screen, res, cell_colors, way_radius, wait_screen_color):
 		self.screen = screen
 		self.cell_colors = cell_colors
+		self.wait_screen_color = wait_screen_color
 		self.way_radius = way_radius
 		self.cell_width = int(res[0]/8)
 		self.cell_height = int(res[1]/8)
@@ -116,7 +117,6 @@ class Board:
 			print("Black win" if self.order == 'w' else "White win")
 			exit()
 
-
 	def makeCastling(self, num, figure):
 		if figure.color == 'w':
 			if num == 2:
@@ -197,10 +197,48 @@ class Board:
 
 		self.is_was_up = 1 if pressed[0] else 0
 
+	def isPawnKing(self):
+		for i in range(8):
+			for j in (0, 7):
+				if self.cells[i][j]:
+					if self.cells[i][j].ty() == "Pawn":
+						return (i, j)
+		return False
+
+	def makeChoise(self, figure_position):
+		pressed = pg.mouse.get_pressed()
+		pos = pg.mouse.get_pos()
+		x, y = pos[0] // self.cell_width, pos[1] // self.cell_height
+
+		pg.draw.rect(self.screen, self.wait_screen_color, (0 * self.cell_width, 1 * self.cell_height, self.cell_width * 8, self.cell_height * 6))
+		choises = (Rock('w' if self.order == 'b' else 'b', (self.cell_width * 2, self.cell_height * 2)), Knight('w' if self.order == 'b' else 'b', (self.cell_width * 2, self.cell_height * 2)), 
+				   Bishop('w' if self.order == 'b' else 'b', (self.cell_width * 2, self.cell_height * 2)), Queen('w' if self.order == 'b' else 'b', (self.cell_width * 2, self.cell_height * 2)))
+		positions = ((1.5, 1.5), (4.5, 1.5), (1.5, 4.5), (4.5, 4.5))
+
+		for i in range(4):
+			self.screen.blit(choises[i].img, (positions[i][0] * self.cell_width, positions[i][1] * self.cell_height, self.cell_width * 2, self.cell_height * 2))
+
+
+		if pressed[0]:
+			if 1 <= x <= 3 and 1 <= y <= 3:
+				self.cells[figure_position[0]][figure_position[1]] = Rock('w' if self.order == 'b' else 'b', (self.cell_width, self.cell_height))
+
+			if 4 <= x <= 6 and 1 <= y <= 3:
+				self.cells[figure_position[0]][figure_position[1]] = Knight('w' if self.order == 'b' else 'b', (self.cell_width, self.cell_height))
+
+			if 1 <= x <= 3 and 4 <= y <= 6:
+				self.cells[figure_position[0]][figure_position[1]] = Bishop('w' if self.order == 'b' else 'b', (self.cell_width, self.cell_height))
+
+			if 4 <= x <= 6 and 4 <= y <= 6:
+				self.cells[figure_position[0]][figure_position[1]] = Queen('w' if self.order == 'b' else 'b', (self.cell_width, self.cell_height))
+
+
+
+
 class App:
-	def __init__(self, res, cell_colors, way_radius):
+	def __init__(self, res, cell_colors, way_radius, wait_screen_color):
 		self.screen = pg.display.set_mode(res)
-		self.board = Board(self.screen, res, cell_colors, way_radius)
+		self.board = Board(self.screen, res, cell_colors, way_radius, wait_screen_color)
 
 	def run(self):
 		while True:
@@ -209,21 +247,25 @@ class App:
 			self.board.drawBoard()
 			self.board.drawPieces()
 
-			self.board.isWin()
-			self.board.control()
-			self.board.clearWays()
-			self.board.drawWays()
-			self.board.drawKills()
+			pos = self.board.isPawnKing()
+			if pos:
+				self.board.makeChoise(pos)
+			else:
+				self.board.isWin()
+				self.board.control()
+				self.board.clearWays()
+				self.board.drawWays()
+				self.board.drawKills()
 
 			pg.display.update()
 			[exit() for i in pg.event.get() if i.type == pg.QUIT]
 
 
-
 if __name__ == '__main__':
 	res = (640, 640)
 	cell_colors = ((150, 150, 150), (100, 100, 100))
+	wait_screen_color = (125, 125, 125)
 	way_radius = 10
 
-	app = App(res, cell_colors, way_radius)
+	app = App(res, cell_colors, way_radius, wait_screen_color)
 	app.run()

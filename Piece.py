@@ -125,7 +125,6 @@ class Pawn:
 	def ty(self):
 		return "Pawn"
 
-
 class Rock:
 	def __init__(self, color, cell_scale):
 		self.is_first = True
@@ -236,7 +235,6 @@ class Rock:
 	def ty(self):
 		return "Rock"
 
-
 class Knight:
 	def __init__(self, color, cell_scale):
 		self.is_first = True
@@ -281,7 +279,6 @@ class Knight:
 
 	def ty(self):
 		return "Knight"
-
 
 class Bishop:
 	def __init__(self, color, cell_scale):
@@ -404,7 +401,6 @@ class Bishop:
 
 	def ty(self):
 		return "Bishop"
-
 
 class King:
 	def __init__(self, color, cell_scale):
