@@ -168,6 +168,9 @@ class Board:
 						if self.start_piece_position[0] - 2 == x and self.start_piece_position[1] == y:
 							self.makeCastling(-2, self.cells[x][y])
 
+					if self.start_piece_position[1] + 2 == y or self.start_piece_position[1] - 2 == y:
+						if self.moving.ty() == "Pawn":
+							self.moving.is_ghost = True
 
 					if self.cells[x][self.start_piece_position[1]]:
 						if self.cells[x][self.start_piece_position[1]].ty() == "Pawn":

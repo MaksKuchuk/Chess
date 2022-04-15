@@ -37,7 +37,7 @@ def isCheck(board, color):
 
 class Pawn:
 	def __init__(self, color, cell_scale):
-		self.is_ghost = True
+		self.is_ghost = False
 		self.is_first = True
 		self.color = color
 		self.img = pg.transform.scale(pg.image.load("img/bP.png" if self.color == 'b' else "img/wP.png"), (cell_scale[0], cell_scale[1]))
